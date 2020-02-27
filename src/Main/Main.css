@@ -1,0 +1,15 @@
+.cards-item{
+    border: 1px solid #000;
+    display: inline-block;
+    text-align: center;
+    padding: 10px;
+    box-sizing: border-box;
+    width: 200px;
+}
+
+.cards-item__img{
+ width: 100%;
+ height: auto;
+ border-radius: 5px;
+ border: 1px solid #000;
+}
