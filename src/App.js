@@ -15,12 +15,12 @@ class App extends React.Component {
   }
   
   render() {
-    let nav = this.props.nav
-    let main = this.props.main
+    let nav = this.props.nav;
+    let main = this.props.main;
     return (
       <div className="App">
-        <Header nav={nav}/>
-        <Main main={main}/>
+        <Header nav={nav} />
+        <Main main={main} />
         <Footer />
       </div>
     )
