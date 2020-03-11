@@ -13,6 +13,7 @@ class Main extends React.Component {
             paginationListActive: '',
             paginationListQuantity: '',
             maxPaginationListQuantity: '9',
+            popup: ''
         }
         this.cards = '';
 
@@ -50,12 +51,36 @@ class Main extends React.Component {
     }
 
     cardItemClickEvent = (event) => {
+
         if (event.target.parentElement.classList.value === 'cards-item') {
-            console.log(event.target.parentElement.getAttribute('data-id'))
+            let cardItemClick = this.state.dataBase[event.target.parentElement.getAttribute('data-id')];
+            let cardItemClicWrapper =
+                <div className="cards-item-wrapper">
+                    {this.cardItem(cardItemClick)}
+                    <div className="add-chart" onClick={this.addToCart} >Add to Cart</div>
+                    <div className="cards-item-close" onClick={this.cardItemModalClose}></div>
+                </div>
+            this.setState({ popup: cardItemClicWrapper })
         } else {
-            console.log(event.target.getAttribute('data-id'))
+            let cardItemClick = this.state.dataBase[event.target.getAttribute('data-id')];
+            let cardItemClicWrapper =
+                <div className="cards-item-wrapper">
+                    {this.cardItem(cardItemClick)}
+                    <div className="add-chart" onClick={this.addToCart} >Add to Cart</div>
+                    <div className="cards-item-close" onClick={this.cardItemModalClose} ></div>
+                </div>
+            this.setState({ popup: cardItemClicWrapper })
         }
     }
+
+    cardItemModalClose = () => {
+        this.setState({ popup: '' })
+    }
+
+    addToCart = () => {
+        this.setState({ popup: '' })
+    }
+
 
     pagination = () => {
         this.setState({ paginationListQuantity: Math.ceil(this.state.dataBase.length / this.state.cardsPerPage) });
@@ -73,7 +98,7 @@ class Main extends React.Component {
         return (
             this.setState({
                 paginationList:
-                    <div className='container'>
+                    <div className='container pagination-wrapper'>
                         < ul className="pagination" >
                             {list}
                         </ul >
@@ -96,22 +121,28 @@ class Main extends React.Component {
             this.state.dataBase.forEach((object, i) => {
                 if (i >= cardItemStart && i < cardItemEnd) {
                     return (
-                        out.push(
-                            <div className="cards-item" key={object.id} data-id={object.id} onClick={this.cardItemClickEvent}>
-                                <img className="cards-item__img" src={object.url} alt={object.name} />
-                                <p className="cards-item__author" >{object.author}</p>
-                                <p className="cards-item__year">{object.year}</p>
-                                <p className="cards-item__name">{object.name}</p>
-                                <p className="cards-item__price">{object.price}</p>
-                                <p className="cards-item__rating">{object.rating}</p>
-                            </div>
-                        )
+                        out.push(this.cardItem(object))
                     )
                 }
             })
             this.cards = out;
         }
     }
+
+    cardItem = (object) => {
+        return (
+            <div className="cards-item" key={object.id} data-id={object.id} onClick={this.cardItemClickEvent}>
+                <img className="cards-item__img" src={object.url} alt={object.name} />
+                <p className="cards-item__author" >{object.author}</p>
+                <p className="cards-item__year">{object.year}</p>
+                <p className="cards-item__name">{object.name}</p>
+                <p className="cards-item__price">{object.price}$</p>
+                <p className="cards-item__rating">{object.rating}</p>
+            </div>
+        )
+    }
+
+
 
     render() {
         let cardItemStart = this.state.cardsPerPage * this.state.paginationListActive;
@@ -120,11 +151,12 @@ class Main extends React.Component {
         return (
             <div className="main" >
                 main
-            < CardItem dataBase={this.state.dataBase} />
+                < CardItem dataBase={this.state.dataBase} />
                 <div className="container card-item-container">
                     {this.cards}
                 </div>
                 {this.state.paginationList}
+                <div className="cardItem-modal">{this.state.popup}</div>
             </div>
         )
     }
