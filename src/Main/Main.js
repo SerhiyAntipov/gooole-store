@@ -10,6 +10,9 @@ class Main extends React.Component {
             dataBase: '',
             cardsPerPage: 12,
             paginationList: '',
+            paginationListActive: '',
+            paginationListQuantity: '',
+            maxPaginationListQuantity: '9',
         }
         this.cards = '';
 
@@ -47,53 +50,73 @@ class Main extends React.Component {
     }
 
     cardItemClickEvent = (event) => {
-        console.log(event)
-
+        if (event.target.parentElement.classList.value === 'cards-item') {
+            console.log(event.target.parentElement.getAttribute('data-id'))
+        } else {
+            console.log(event.target.getAttribute('data-id'))
+        }
     }
 
     pagination = () => {
-        this.setState({ paginationList: Math.ceil(this.state.dataBase.length / this.state.cardsPerPage) });
-        // let list = 0;
+        this.setState({ paginationListQuantity: Math.ceil(this.state.dataBase.length / this.state.cardsPerPage) });
+        let list = [];
+        for (let i = 0; i < this.state.paginationListQuantity; i++) {
+            if (i < this.state.maxPaginationListQuantity && i === 0) {
+                list.push(<li key={i} className="active" onClick={this.changePagination}><a href="/">{i + 1}</a></li>)
+                this.setState({ paginationListActive: i })
+            }
+            else if (i < this.state.maxPaginationListQuantity) {
+                list.push(<li key={i} onClick={this.changePagination}><a href="/" >{i + 1}</a></li>)
+            }
+        }
+
         return (
             this.setState({
                 paginationList:
-                   <div className='container'>
+                    <div className='container'>
                         < ul className="pagination" >
-                            <li><a href="/">1</a></li>
-                            <li><a href="/">2</a></li>
-                            <li><a href="/">3</a></li>
+                            {list}
                         </ul >
-                   </div>
+                    </div>
             })
         )
     }
 
-    cardItem = (object) => {
-        return (
-            <div className="cards-item" key={object.id} data-id={object.id} onClick={this.cardItemClickEvent}>
-                <img className="cards-item__img" src={object.url} alt={object.name} />
-                <p className="cards-item__author" >{object.author}</p>
-                <p className="cards-item__year">{object.year}</p>
-                <p className="cards-item__name">{object.name}</p>
-                <p className="cards-item__price">{object.price}</p>
-                <p className="cards-item__rating">{object.rating}</p>
-            </div>
-        )
+    changePagination = (event) => {
+        event.preventDefault();
+        let pagination = document.querySelectorAll('.pagination');
+        pagination[0].children[this.state.paginationListActive].classList.toggle('active');
+        this.setState({ paginationListActive: (event.target.innerText - 1) })
+        pagination[0].children[event.target.innerText - 1].classList.toggle('active');
     }
 
-    
-    render() {
+    createCardItemList = (cardItemStart, cardItemEnd) => {
         if (this.state.dataBase[0]) {
             let out = []
             this.state.dataBase.forEach((object, i) => {
-                if (i < this.state.cardsPerPage) {
+                if (i >= cardItemStart && i < cardItemEnd) {
                     return (
-                        out.push(this.cardItem(object))
+                        out.push(
+                            <div className="cards-item" key={object.id} data-id={object.id} onClick={this.cardItemClickEvent}>
+                                <img className="cards-item__img" src={object.url} alt={object.name} />
+                                <p className="cards-item__author" >{object.author}</p>
+                                <p className="cards-item__year">{object.year}</p>
+                                <p className="cards-item__name">{object.name}</p>
+                                <p className="cards-item__price">{object.price}</p>
+                                <p className="cards-item__rating">{object.rating}</p>
+                            </div>
+                        )
                     )
                 }
             })
             this.cards = out;
         }
+    }
+
+    render() {
+        let cardItemStart = this.state.cardsPerPage * this.state.paginationListActive;
+        let cardItemEnd = this.state.cardsPerPage * (this.state.paginationListActive + 1);
+        this.createCardItemList(cardItemStart, cardItemEnd);
         return (
             <div className="main" >
                 main
