@@ -1,6 +1,7 @@
 import React from 'react';
 import './Main.css';
 import CardItem from '../CardItem/CardItem';
+import Pagination from '../Pagination/Pagination';
 
 class Main extends React.Component {
     constructor(props) {
@@ -13,7 +14,6 @@ class Main extends React.Component {
             paginationListActive: '',
             paginationListQuantity: '',
             maxPaginationListQuantity: '9',
-            popup: ''
         }
         this.cards = '';
 
@@ -36,51 +36,31 @@ class Main extends React.Component {
         let baseFilledUpTo = 36;
         // for (let i = 0; i < data.length; i++) {
         for (let i = 0; i < baseFilledUpTo; i++) {
-            let temp = {};
-            temp['id'] = data[i]['gsx$id']['$t'];
-            temp['url'] = data[i]['gsx$url']['$t'];
-            temp['author'] = data[i]['gsx$author']['$t'];
-            temp['year'] = data[i]['gsx$year']['$t'];
-            temp['name'] = data[i]['gsx$name']['$t'];
-            temp['price'] = data[i]['gsx$price']['$t'];
-            temp['rating'] = data[i]['gsx$rating']['$t'];
-            out[data[i]['gsx$id']['$t']] = temp;
+            let starTemp = {};
+            starTemp['id'] = data[i]['gsx$id']['$t'];
+            starTemp['url'] = data[i]['gsx$url']['$t'];
+            starTemp['author'] = data[i]['gsx$author']['$t'];
+            starTemp['year'] = data[i]['gsx$year']['$t'];
+            starTemp['name'] = data[i]['gsx$name']['$t'];
+            starTemp['price'] = data[i]['gsx$price']['$t'];
+            starTemp['rating'] = data[i]['gsx$rating']['$t'];
+            out[data[i]['gsx$id']['$t']] = starTemp;
         }
         this.setState({ dataBase: out });
         this.pagination();
     }
 
     cardItemClickEvent = (event) => {
-
         if (event.target.parentElement.classList.value === 'cards-item') {
             let cardItemClick = this.state.dataBase[event.target.parentElement.getAttribute('data-id')];
-            let cardItemClicWrapper =
-                <div className="cards-item-wrapper">
-                    {this.cardItem(cardItemClick)}
-                    <div className="add-chart" onClick={this.addToCart} >Add to Cart</div>
-                    <div className="cards-item-close" onClick={this.cardItemModalClose}></div>
-                </div>
-            this.setState({ popup: cardItemClicWrapper })
-        } else {
+            console.log(cardItemClick)
+        } else if (event.target.classList.value !== 'rating-star-wrapper' &&
+            event.target.parentElement.classList.value !== 'rating-star-wrapper' &&
+            event.target.parentElement.parentElement.classList.value !== 'rating-star-wrapper') {
             let cardItemClick = this.state.dataBase[event.target.getAttribute('data-id')];
-            let cardItemClicWrapper =
-                <div className="cards-item-wrapper">
-                    {this.cardItem(cardItemClick)}
-                    <div className="add-chart" onClick={this.addToCart} >Add to Cart</div>
-                    <div className="cards-item-close" onClick={this.cardItemModalClose} ></div>
-                </div>
-            this.setState({ popup: cardItemClicWrapper })
+            console.log(cardItemClick)
         }
     }
-
-    cardItemModalClose = () => {
-        this.setState({ popup: '' })
-    }
-
-    addToCart = () => {
-        this.setState({ popup: '' })
-    }
-
 
     pagination = () => {
         this.setState({ paginationListQuantity: Math.ceil(this.state.dataBase.length / this.state.cardsPerPage) });
@@ -129,7 +109,20 @@ class Main extends React.Component {
         }
     }
 
+    changeStar = (event) => {
+        let tempData = this.state.dataBase[event.target.parentElement.parentElement.getAttribute('data-id')];
+        tempData.rating = event.target.getAttribute('data-star');
+    }
+
     cardItem = (object) => {
+        let starTemp = [];
+        for (let i = 0; i < 5; i++) {
+            if (i !== Number(object.rating) - 1) {
+                starTemp.push(<input className="rating-star" type="radio" name={object.id + object.name} key={object.name + i + 'star'} data-star={i + 1} onClick={this.changeStar} />)
+            } else {
+                starTemp.push(<input className="rating-star" type="radio" name={object.id + object.name} key={object.name + i + 'star'} data-star={i + 1} onClick={this.changeStar} defaultChecked />)
+            }
+        }
         return (
             <div className="cards-item" key={object.id} data-id={object.id} onClick={this.cardItemClickEvent}>
                 <img className="cards-item__img" src={object.url} alt={object.name} />
@@ -137,12 +130,12 @@ class Main extends React.Component {
                 <p className="cards-item__year">{object.year}</p>
                 <p className="cards-item__name">{object.name}</p>
                 <p className="cards-item__price">{object.price}$</p>
-                <p className="cards-item__rating">{object.rating}</p>
+                <div className="rating-star-wrapper">
+                    {starTemp}
+                </div>
             </div>
         )
     }
-
-
 
     render() {
         let cardItemStart = this.state.cardsPerPage * this.state.paginationListActive;
@@ -152,11 +145,12 @@ class Main extends React.Component {
             <div className="main" >
                 main
                 < CardItem dataBase={this.state.dataBase} />
+                
                 <div className="container card-item-container">
                     {this.cards}
                 </div>
                 {this.state.paginationList}
-                <div className="cardItem-modal">{this.state.popup}</div>
+                < Pagination dataBase={this.state.dataBase} />
             </div>
         )
     }
