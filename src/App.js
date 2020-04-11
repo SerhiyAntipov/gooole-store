@@ -17,10 +17,11 @@ class App extends React.Component {
   render() {
     let nav = this.props.nav;
     let main = this.props.main;
+    let googleData = this.props.googleData;
     return (
       <div className="App">
         <Header nav={nav} />
-        <Main main={main} />
+        <Main main={main}  googleData={googleData}/>
         <Footer />
       </div>
     )

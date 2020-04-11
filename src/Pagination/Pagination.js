@@ -5,27 +5,32 @@ import '../Pagination/Pagination.css';
 class Pagination extends React.Component {
     constructor(props) {
         super(props)
-
         this.state = {
             dataBase: '',
             cardsPerPage: 12,
             paginationList: '',
             paginationListActive: '',
-            paginationListQuantity: '',
             maxPaginationListQuantity: '9',
         }
-        
+        this.cards = '';
     }
+
     static getDerivedStateFromProps(props, state) {
-        return ({
-            dataBase: props.dataBase
-        })
+        return (
+            { dataBase: props.dataBase }
+        )
+    }
+
+    componentDidMount() {
+        this.pagination();
+
     }
 
     pagination = () => {
-        this.setState({ paginationListQuantity: Math.ceil(this.state.dataBase.length / this.state.cardsPerPage) });
+       
+        let paginationListQuantity = Math.ceil(this.state.dataBase.length / this.state.cardsPerPage)
         let list = [];
-        for (let i = 0; i < this.state.paginationListQuantity; i++) {
+        for (let i = 0; i < paginationListQuantity; i++) {
             if (i < this.state.maxPaginationListQuantity && i === 0) {
                 list.push(<li key={i} className="active" onClick={this.changePagination}><a href="/">{i + 1}</a></li>)
                 this.setState({ paginationListActive: i })
@@ -34,7 +39,6 @@ class Pagination extends React.Component {
                 list.push(<li key={i} onClick={this.changePagination}><a href="/" >{i + 1}</a></li>)
             }
         }
-
         return (
             this.setState({
                 paginationList:
@@ -57,7 +61,7 @@ class Pagination extends React.Component {
 
     render() {
         return (       
-            <div>Pagination {this.state.paginationList}</div>
+            <div>{this.state.paginationList}</div>
         )
     }
 }
