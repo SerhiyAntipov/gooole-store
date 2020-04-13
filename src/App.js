@@ -4,28 +4,15 @@ import Header from './Header/Header';
 import Main from './Main/Main';
 import Footer from  './Footer/Footer'
 
-
-class App extends React.Component {
-  constructor(props) {
-    super(props)
-
-    this.state = {
-
-    }
-  }
+const  App = (props) =>{
   
-  render() {
-    let nav = this.props.nav;
-    let main = this.props.main;
-    let googleData = this.props.googleData;
-    return (
-      <div className="App">
-        <Header nav={nav} />
-        <Main main={main}  googleData={googleData}/>
-        <Footer />
-      </div>
-    )
-  }
+  return (
+    <div className="App">
+      <Header  headerMenu={props.headerMenu} />
+      <Main pagination={props.pagination} renderCard={props.renderCard}/>
+      <Footer renderFooter={props.renderFooter}/>
+    </div>
+  )
 }
 
 export default App;

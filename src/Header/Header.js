@@ -1,21 +1,18 @@
 import React from 'react';
 import './Header.css';
 
-class Header extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
+const Header = (props) => {
 
-        }
-    }
+    return (
+        <div className="main-header">
+            <nav>
+                <ul>
+                    {props.headerMenu()}
+                </ul>
+            </nav>
 
-    render() {
-        return (
-            <div className="main-header">
-                header
-            </div>
-        )
-    }
+        </div>
+    )
 }
 
 export default Header;
